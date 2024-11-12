@@ -10,7 +10,7 @@ async function main() {
     const eventName = "Tusca";
     const symbol = "TSC";
     const eventCapacity = 10000;
-    const ticketPrice = ethers.parseEther("0.5"); // Exemplo de preço do ingresso: 0.5 ETH
+    const ticketPrice = ethers.parseEther("0.5");
 
     const eventTicket = await EventTicket.deploy(eventName, symbol, eventCapacity, ticketPrice);
     console.log("EventTicket contract deployed to:", eventTicket.target);

@@ -8,9 +8,11 @@ contract Marketplace{
     using Address for address payable;
 
     address public eventAddress;  // (EventTicket)
+    uint256 public ticketPrice;
 
-    constructor(address _eventAddress) {
+    constructor(address _eventAddress, uint256 _ticketPrice) {
         eventAddress = _eventAddress; 
+        ticketPrice = _ticketPrice;
     }
 
     // Struct to storage the ticket list
@@ -31,7 +33,7 @@ contract Marketplace{
 
     function listTicket(address nftAddress, uint256 tokenId, uint256 price) external {
         require(price > 0, "The price must be grater than 0");
-
+        require(price <= ticketPrice + (ticketPrice / 2), "Price cannot exceed 50% above the original price");
         IERC721 nft = IERC721(nftAddress);
         address seller = msg.sender;
 

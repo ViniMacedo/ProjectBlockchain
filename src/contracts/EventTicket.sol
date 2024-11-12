@@ -15,12 +15,14 @@ contract EventTicket is ERC721, Ownable{
     currentTicketCount = 1;
     ticketPrice = price;
 
-    // Criar o Marketplace para este evento
-    Marketplace marketplace = new Marketplace(address(this));
+    Marketplace marketplace = new Marketplace(address(this), price);
     marketplaceAddress = address(marketplace);
   }
 
+  mapping(uint256 => bool) public validatedTickets; 
+
   event TicketMinted(address indexed buyer, uint256 tokenId);
+  event TicketValidated(uint256 tokenId, address validator);
 
   function mintTicket(address to) external payable {
     require(currentTicketCount <= maxTickets, "Max ticket capacity reached");
@@ -39,5 +41,21 @@ contract EventTicket is ERC721, Ownable{
     require(ownerOf(tokenId) == msg.sender, "Only the owner can approve the resell");
     approve(marketplaceAddress, tokenId);
   }
+
+    function validateTicket(uint256 tokenId) external onlyOwner {
+      require(ticketExists(tokenId), "Ticket does not exist");
+      require(!validatedTickets[tokenId], "Ticket is already validated");
+
+      validatedTickets[tokenId] = true;
+      emit TicketValidated(tokenId, msg.sender);
+    }
+
+    function ticketExists(uint256 tokenId) public view returns (bool) {
+      try this.ownerOf(tokenId) {
+        return true;
+      } catch {
+        return false;
+      }
+    }
 
 }
